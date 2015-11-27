@@ -184,7 +184,7 @@ describe('request.agent(app)', function(){
 
 ### .expect(body[, fn])
 
-  Assert response `body` text with a string, regular expression, or
+  Assert response `body` text with a string, buffer, regular expression, or
   parsed body object.
 
 ### .expect(field, value[, fn])

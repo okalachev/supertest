@@ -498,6 +498,51 @@ describe('request(app)', function(){
       .expect(/^hey/)
       .expect('hey tj', done);
     });
+
+    it('should assert the response buffer', function(done) {
+      var app = express();
+
+      app.get('/', function(req, res){
+        res.type('png').send(new Buffer('hey tj'));
+      });
+
+      request(app)
+      .get('/')
+      .expect(new Buffer('hey tj'))
+      .end(done);
+    });
+
+    it('should return an error if the body as a buffer fails', function(done) {
+      var app = express();
+
+      app.get('/', function(req, res){
+        res.type('png').send('hey tj');
+      });
+
+      request(app)
+      .get('/')
+      .expect(new Buffer('hey'))
+      .end(function (err, res) {
+        err.message.should.equal("expected <Buffer 68 65 79> response body, got <Buffer 68 65 79 20 74 6a>");
+        done();
+      });
+    });
+
+    it('should return an error on a binary resource with non-buffer expect value', function(done) {
+      var app = express();
+
+      app.get('/', function(req, res){
+        res.type('png').send('hey tj');
+      });
+
+      request(app)
+      .get('/')
+      .expect('hey tj')
+      .end(function (err, res) {
+        err.message.should.equal("expected 'hey tj' response body, got <Buffer 68 65 79 20 74 6a>");
+        done();
+      });
+    })
   });
 
   describe('.expect(field, value[, fn])', function(){
